@@ -1,35 +1,4 @@
----
-title: 'CIND 123 - Data Analytics: Basic Methods'
-author: 
-output:
-  word_document: default
-  html_document: default
-  pdf_document: default
----
-<center> <h1> Assignment 2 (10%) </h1> </center>
-<center>  <h3> [TOOBA KHAN] </h2> </center>
-<center> <h3> [CIND123 DK0 & 500619489] </h2> </center>
----
-## Instructions 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. Review this website for more details on using R Markdown <http://rmarkdown.rstudio.com>.
-
-Use RStudio for this assignment. Complete the assignment by inserting your R code wherever you see the string "#INSERT YOUR ANSWER HERE".
-
-When you click the **Knit** button, a document (PDF, Word, or HTML format) will be generated that includes both the assignment content as well as the output of any embedded R code chunks.
-
-Submit **both**  the rmd and generated output files. Failing to submit both files will be subject to mark deduction.
-
-## Sample Question and Solution
-
-Use `seq()` to create the vector $(1,2,3,\ldots,20)$.
-
-```{r}
-seq(1,20)
-```
-
-******
-\newpage
 ## Question 1 
 
 The Titanic Passenger Survival Data Set provides information on the fate of passengers on the fatal maiden voyage of the ocean liner "Titanic." The dataset is available from the Department of Biostatistics at the Vanderbilt University School of Medicine (https://biostat.app.vumc.org/wiki/pub/Main/DataSets/titanic3.csv)in several formats. store the Titanic Data Set `titanic_train` using the following commands. 
@@ -200,6 +169,5 @@ d) is less than 13 or greater than 19
 pnorm(q= 13, mean =16, sd= 3) + pnorm(q =19, mean = 16, sd = 3, lower.tail = F)
 ```
 
-******
 
-END of Assignment #2.
+
