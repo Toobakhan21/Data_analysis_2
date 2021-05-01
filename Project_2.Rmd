@@ -1,0 +1,205 @@
+---
+title: 'CIND 123 - Data Analytics: Basic Methods'
+author: 
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+<center> <h1> Assignment 2 (10%) </h1> </center>
+<center>  <h3> [TOOBA KHAN] </h2> </center>
+<center> <h3> [CIND123 DK0 & 500619489] </h2> </center>
+---
+## Instructions 
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. Review this website for more details on using R Markdown <http://rmarkdown.rstudio.com>.
+
+Use RStudio for this assignment. Complete the assignment by inserting your R code wherever you see the string "#INSERT YOUR ANSWER HERE".
+
+When you click the **Knit** button, a document (PDF, Word, or HTML format) will be generated that includes both the assignment content as well as the output of any embedded R code chunks.
+
+Submit **both**  the rmd and generated output files. Failing to submit both files will be subject to mark deduction.
+
+## Sample Question and Solution
+
+Use `seq()` to create the vector $(1,2,3,\ldots,20)$.
+
+```{r}
+seq(1,20)
+```
+
+******
+\newpage
+## Question 1 
+
+The Titanic Passenger Survival Data Set provides information on the fate of passengers on the fatal maiden voyage of the ocean liner "Titanic." The dataset is available from the Department of Biostatistics at the Vanderbilt University School of Medicine (https://biostat.app.vumc.org/wiki/pub/Main/DataSets/titanic3.csv)in several formats. store the Titanic Data Set `titanic_train` using the following commands. 
+```{r}
+url<-"https://biostat.app.vumc.org/wiki/pub/Main/DataSets/titanic3.csv"
+titanic_train<- read.csv(file = url , header = T, sep = ",", na.strings = c("","NA"),  stringsAsFactors = F)
+```
+
+a) Extract the columns `sex`, `age`, `cabin` and `survived` into a new data frame of the name 'titanicSubset'.
+
+```{r}
+titanicSubset <- data.frame(Sex=titanic_train$sex, Age=titanic_train$age, Cabin=titanic_train$cabin, Survived=titanic_train$survived)
+titanicSubset
+```
+
+
+b) Use the aggregate() function to display the total number of survivors grouped by `sex`
+
+```{r}
+aggregate(Survived ~ Sex, data = titanicSubset, FUN = sum)
+```
+
+c) Use the count() function in `dplyr` package to display the total number of passengers within each Ticket Class `Pclass.`
+
+```{r}
+library(dplyr)
+titanic_train %>% count(pclass)
+```
+
+d) Answer the following graphically (using visualization):
+1. What was the survival rates for females and males?
+2. What was the age distribution on the Titanic?
+
+Hint: You can use ggplot2
+```{r}
+library(dplyr)
+library(ggplot2)
+titanic_train$survived <- as.factor(titanic_train$survived)
+#1.
+ggplot(titanic_train, aes(x = sex, fill = survived )) + 
+  theme_bw() +
+  geom_bar() +
+  labs(y = "Passenger Count",
+       title = "Titanic Survival Rates by Sex")
+# 2. 
+ggplot(titanic_train, aes(x = age, fill = "red")) +
+  theme_bw() +
+  geom_histogram(binwidth = 5) +
+  labs(y = "Passenger Count",
+       x = "Age (binwidth = 5)",
+       title = "Titanic Age Distribtion")
+```
+
+e)Use the `for` loop and `if` control statements to list the women's names, age 34 or more that embarked from S (Southampton), on the Titanic.
+```{r}
+x <- for( i in 1:dim(titanic_train)[1]){
+    if(is.na(titanic_train$age[i])){
+      next
+  }
+    if(is.na(titanic_train$embarked[i])){
+      next
+  }  
+  if (titanic_train$sex[i]=="female" && titanic_train$age[i] >= 34 &&       titanic_train$embarked[i]=="S"){
+    
+  }
+    print(titanic_train$name[i])
+ }
+
+```
+
+******
+\newpage
+## Question 2
+
+A study was conducted on GRE test takers to evaluate the success conditions. The success rate is 25%. A sample of 30 test takers is selected for the study. Use the binomial distribution to calculate the followings:
+
+a) The probability that 10 test takers fail the GRE test:
+```{r}
+dbinom(x=10, size = 30, prob = 0.75)
+```
+
+b) The probability of getting at least five test takers succeed in the test
+```{r}
+1-pbinom(q=4, size = 30, prob = 0.25)
+```
+
+c) The probability of 25 or less fail the test
+```{r}
+pbinom(q=25, size = 30, prob = 0.75)
+```
+
+
+******
+\newpage
+## Question 3 
+
+In a shipment of 20 engines, history shows that the probability of any one engine proving unsatisfactory is 0.1
+
+a) Use the Binomial approximation to calculate the probability that more than 10 engines are defective? 
+```{r}
+1-pbinom(q=10, size = 20, prob = 0.1)
+```
+
+b) Use the Poisson approximation to calculate the probability that at most three engines are defective? 
+```{r}
+ppois(q=3, lambda = 0.1*20)
+```
+
+b) Use the binomial approximation to calculate the probability that at most three engines are defective? 
+```{r}
+pbinom(q=3, size=20, prob = 0.1)
+```
+
+
+c) Compare the results of parts a and b, then illustrate on how well the Poisson probability distribution approximates the Binomial probability distribution.
+```{r}
+# Poisson approximation to binomial distribution
+# If X be the binomially random variable with n number of trials with probability of success p. The mean of X is np and variance is np(1-p).
+# The general rule of thumb to use Poisson distribution to binomial distribution is that the sample size n is sufficiently large and p is sufficiently small. Such that lambda = np (finite).
+# In the above example value of probabilities are approximately same, computed from both distributions i-e Poisson and Binomial.
+library(dplyr)
+library(ggplot2)
+
+x <- seq(0, 20,  by = 1)
+y_dpois <- dpois(x, lambda = 0.1*20)
+y_dbinom<- dbinom(x, 20, 0.1)
+df <- tibble(data.frame(x,y_dbinom,y_dpois))
+
+df %>%
+  ggplot(aes(x = x, y = y_dbinom, col = "Binomial")) +
+  geom_line()+
+  geom_line(aes(y = y_dpois, col = "Poisson"))+
+  labs (x = "Number of successes",
+       y = "Probabilities",
+       title = "Comparision of Poisson and Binomial Distribution")
+
+
+```
+
+
+
+******
+\newpage
+## Question 4 
+
+Write a script in R to compute the following probabilities of a normal random variable with mean 16 and variance 9
+
+a) lies between 14.4 and 20.3 (inclusive)
+```{r}
+pnorm(q=20.3, mean = 16, sd = 3) - pnorm(q=14.4, mean = 16, sd = 3)
+```
+
+
+b) is greater than 21.8
+```{r}
+pnorm(q = 21.8, mean = 16, sd = 3, lower.tail = F)
+```
+
+
+c) is less or equal to 10.5
+```{r}
+pnorm(q = 10.5, mean = 16, sd=3)
+```
+
+
+d) is less than 13 or greater than 19
+```{r}
+pnorm(q= 13, mean =16, sd= 3) + pnorm(q =19, mean = 16, sd = 3, lower.tail = F)
+```
+
+******
+
+END of Assignment #2.
